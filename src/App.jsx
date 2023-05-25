@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { collection, getDocs ,addDoc ,deleteDoc} from "firebase/firestore";
+import { collection, getDocs ,addDoc ,deleteDoc,doc} from "firebase/firestore";
 import { db } from '../firebaseConfig';
 import BookItem from './BookItem'
 
@@ -12,7 +12,7 @@ const App = () => {
    const querySnapshot = await getDocs(collection(db,'books'))
    const booksData=[]
    querySnapshot.forEach((doc) => {
-     booksData.push(  doc.data()) ;
+     booksData.push( {id:doc.id ,...doc.data()}) ;
   });
   setBooks(booksData)
   }
@@ -40,14 +40,25 @@ const App = () => {
   }
 
 
+  const deleteBook=async(docId) => { 
+    console.log((docId))
+    try{
+        await deleteDoc(doc(db,'books',docId))
+    }catch(e){
+        // alert(e.message)
+    }
+    getBooks()
+ 
+}
+
   return (
     <>
       <header className='bg-gray-900 text-center p-4'>
         <h1 className='text-white text-2xl '>Library - Firebase CRUD</h1>
       </header>
-      <main  className=' mt-20'>
+      <main  className=' mt-20 p-4'>
         {/* form */}
-        <form className='w-1/4 mx-auto '  onSubmit={handleSubmit} >
+        <form className='md:w-1/4 mx-auto '  onSubmit={handleSubmit} >
           <input
             id="booktitle"
             className="border-2 outline-none w-full border-[#272626]  p-3 rounded-sm"
@@ -69,7 +80,7 @@ const App = () => {
           <button className='text-white bg-gray-900 p-3 w-full  rounded-md font-bold '>Add/Update</button>
         </form>
         {/* table */}
-        <table className='w-1/2 mx-auto mt-20 '>
+        <table className='md:w-1/2 mx-auto mt-20 '>
           <thead>
             <tr className=' my-20 w-full  m-[2rem]'>
               <th className=' text-center border-[1px] p-2'>#</th>
@@ -81,7 +92,17 @@ const App = () => {
           </thead>
           <tbody>
             {books.map(({ id, title, author, status },index) => {
-              return <BookItem key={id} rank={index} id={id} author={author} status={status} title={title} />
+              return  <tr key={id} >
+              <td className='text-center border-[1px] p-2'>{index + 1} </td>
+              <td className='text-center border-[1px] p-2'>{author}</td>
+              <td className='text-center border-[1px] p-2'>{title}</td>
+              <td className='text-center border-[1px] p-2'>{status}</td>
+              <td className='text-center flex   border-[1px] p-2'>
+                  <button className='bg-red-400  text-white px-3 py-1 font-medium rounded-md'>Edit</button>
+                  <button onClick={() => deleteBook(id)} className='bg-gray-900 text-white mx-1 px-3 py-1 font-medium rounded-md'>Delete</button>
+              </td>
+              </tr>
+              // return <BookItem key={id} rank={index} id={id} author={author} status={status} title={title} />
             })}
           </tbody>
         </table>
