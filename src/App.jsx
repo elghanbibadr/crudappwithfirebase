@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { collection, getDocs ,addDoc} from "firebase/firestore";
+import { collection, getDocs ,addDoc ,deleteDoc} from "firebase/firestore";
 import { db } from '../firebaseConfig';
 import BookItem from './BookItem'
 
@@ -12,11 +12,12 @@ const App = () => {
    const querySnapshot = await getDocs(collection(db,'books'))
    const booksData=[]
    querySnapshot.forEach((doc) => {
-     booksData.push(doc.data()) ;
+     booksData.push(  doc.data()) ;
   });
   setBooks(booksData)
   }
 
+  console.log(books)
   useEffect(() => {
   getBooks()
   },[])
