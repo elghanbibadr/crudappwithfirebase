@@ -26,6 +26,11 @@ const App = () => {
                         value={bookAuthor}
                         placeholder='Book Author'
                         onChange={(e) => setBookAuthor(e.target.value)} />
+                           <select name="book status" id="bookstatus">
+                            <option value="">book status</option>
+                            <option value="">available</option>
+                            <option value="">not available</option>
+                           </select>
                 <button className='text-white bg-gray-900 p-3 w-full  rounded-md font-bold '>Add/Update</button>
             </form>
 
