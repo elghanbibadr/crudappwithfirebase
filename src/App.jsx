@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs ,addDoc} from "firebase/firestore";
 import { db } from '../firebaseConfig';
 import BookItem from './BookItem'
 
@@ -18,14 +18,28 @@ const App = () => {
   }
 
   useEffect(() => {
-   return () => getBooks()
+  getBooks()
   },[])
 
-console.log(books)
 
-  const handleSubmit = () => { }
+  const handleSubmit =async (e) => { 
+    e.preventDefault();
+    try{
+      await addDoc(collection(db, "books"), {
+        title:bookTitle,
+        author:bookAuthor ,
+        status:"available"
+      });
+    }catch(e){
+      alert(e.message)
+    }
+    setBookAuthor('')
+    setBookTitle('')
+    getBooks()
+  }
+
+
   return (
-
     <>
       <header className='bg-gray-900 text-center p-4'>
         <h1 className='text-white text-2xl '>Library - Firebase CRUD</h1>
