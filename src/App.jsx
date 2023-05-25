@@ -1,9 +1,27 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { collection, getDocs } from "firebase/firestore";
+import { db } from '../firebaseConfig';
 import BookItem from './BookItem'
+
 const App = () => {
   const [bookAuthor, setBookAuthor] = useState('')
   const [bookTitle, setBookTitle] = useState('')
-  const [books, setBooks] = useState([{id:"first", title:"Book 1",status:'available' , author:"author"}])
+  const [books, setBooks] = useState([])
+
+  const getBooks=async () =>{
+   const querySnapshot = await getDocs(collection(db,'books'))
+   const booksData=[]
+   querySnapshot.forEach((doc) => {
+     booksData.push(doc.data()) ;
+  });
+  setBooks(booksData)
+  }
+
+  useEffect(() => {
+   return () => getBooks()
+  },[])
+
+console.log(books)
 
   const handleSubmit = () => { }
   return (
@@ -12,7 +30,7 @@ const App = () => {
       <header className='bg-gray-900 text-center p-4'>
         <h1 className='text-white text-2xl '>Library - Firebase CRUD</h1>
       </header>
-      <body  className=' mt-20'>
+      <main  className=' mt-20'>
         {/* form */}
         <form className='w-1/4 mx-auto '  onSubmit={handleSubmit} >
           <input
@@ -52,7 +70,7 @@ const App = () => {
             })}
           </tbody>
         </table>
-      </body>
+      </main>
 
 
     </>
