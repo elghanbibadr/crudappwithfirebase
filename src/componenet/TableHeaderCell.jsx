@@ -1,8 +1,8 @@
 import React from 'react'
 
-const TableHeaderCell = ({title}) => {
+const TableHeaderCell = ({title: cellName}) => {
   return (  
-     <th className=' text-center border-[1px] p-2'>{title}</th>
+     <th className=' text-center border-[1px] p-2'>{cellName}</th>
   )
 }
 
