@@ -8,6 +8,7 @@ const App = () => {
   const [bookTitle, setBookTitle] = useState('')
   const [books, setBooks] = useState([])
   const [bookNeedToUpdate,setBookNeedToUpdate] = useState(false)
+  const [bookToBeUpdatedId,setBookToBeEditedId]=useState('')
 
   //  get books
   const getBooks = async () => {
@@ -19,7 +20,6 @@ const App = () => {
     setBooks(booksData)
   }
 
-  console.log(books)
   useEffect(() => {
     getBooks()
   }, [])
@@ -39,7 +39,17 @@ const App = () => {
         alert(e.message)
       }
     }else{
-     editBook()
+      try {
+          await updateDoc(doc(db, "books",bookToBeUpdatedId), {
+            id:bookToBeUpdatedId,
+            title: bookTitle,
+            author: bookAuthor,
+            status: "available"
+          });
+        } catch (e) {
+          alert(e.message)
+        }
+        setBookNeedToUpdate(false)
     }
     setBookAuthor('')
     setBookTitle('')
@@ -60,24 +70,29 @@ const App = () => {
   }
 
   // update books
-  const editBook=  async (bookId) => {
+  const editBook=   (bookId) => {
     setBookNeedToUpdate(true)
-   const {author,title}=books.find(book => book.id === bookId)
-  //  console.log(targetedBook)
-   setBookTitle(title)
-   setBookAuthor(author)
-   console.log(title)
-   try {
-    await updateDoc(doc(db, "books",bookId), {
-      id:bookId,
-      title: bookTitle,
-      author: bookAuthor,
-      status: "available"
-    });
-  } catch (e) {
-    alert(e.message)
-  }
-  setBookNeedToUpdate(false)
+    setBookToBeEditedId(bookId)
+    const {author,title}=books.find(book => book.id === bookToBeUpdatedId)
+    console.log(author,title)
+    setBookAuthor(author)
+    setBookTitle(title)
+  //  const {author,title}=books.find(book => book.id === bookId)
+  // //  console.log(targetedBook)
+  //  setBookTitle(title)
+  //  setBookAuthor(author)
+  //  console.log(title)
+  //  try {
+  //   await updateDoc(doc(db, "books",bookId), {
+  //     id:bookId,
+  //     title: bookTitle,
+  //     author: bookAuthor,
+  //     status: "available"
+  //   });
+  // } catch (e) {
+  //   alert(e.message)
+  // }
+  // setBookNeedToUpdate(false)
   }
 
 
