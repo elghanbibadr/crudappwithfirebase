@@ -8,6 +8,7 @@ const App = () => {
   const [bookAuthor, setBookAuthor] = useState('')
   const [bookTitle, setBookTitle] = useState('')
   const [books, setBooks] = useState([])
+  const [bookStatus,setBookStatus] = useState('available')
   const [bookNeedToUpdate,setBookNeedToUpdate] = useState(false)
   const [bookToBeUpdatedId,setBookToBeEditedId]=useState('')
  const tableHeaderCells=['#',"Book Title","Book Author","Status","Action"]
@@ -35,7 +36,7 @@ const App = () => {
         await addDoc(collection(db, "books"), {
           title: bookTitle,
           author: bookAuthor,
-          status: "available"
+          status: bookStatus
         });
       } catch (e) {
         alert(e.message)
@@ -83,6 +84,11 @@ const App = () => {
   }
 
 
+  const handleStatusChange = (event) => {
+    setBookStatus(event.target.value);
+  };
+
+
   return (
     <>
       <header className='bg-gray-900 text-center p-4'>
@@ -104,15 +110,15 @@ const App = () => {
             value={bookAuthor}
             placeholder='Book Author'
             onChange={(e) => setBookAuthor(e.target.value)} />
-          <select name="book status" id="bookstatus">
-            <option value="">book status</option>
-            <option value="">available</option>
-            <option value="">not available</option>
+          <select name="book status" onChange={handleStatusChange} value={bookStatus} id="bookstatus">
+            <option>book status</option>
+            <option>available</option>
+            <option>not available</option>
           </select>
           <button className='text-white bg-gray-900 p-3 w-full  rounded-md font-bold '>Add/Update</button>
         </form>
         {/* table */}
-        <table className='md:w-1/2 mx-auto mt-20 '>
+      { books.length!==0 &&  <table className='md:w-1/2 mx-auto mt-20 '>
           <thead>
             <tr className=' my-20 w-full  m-[2rem]'>
               {tableHeaderCells.map((cellName,index) => {
@@ -132,10 +138,10 @@ const App = () => {
                   <button onClick={() => deleteBook(id)} className='bg-gray-900 text-white mx-1 px-3 py-1 font-medium rounded-md'>Delete</button>
                 </td>
               </tr>
-              // return <BookItem key={id} rank={index} id={id} author={author} status={status} title={title} />
             })}
           </tbody>
-        </table>
+        </table>}
+        {books.length===0 && <h1 className='text-black text-xl font-normal text-center mt-10'>please add a book</h1>}
       </main>
 
 
