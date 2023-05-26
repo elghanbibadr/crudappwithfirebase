@@ -31,6 +31,10 @@ const App = () => {
   // add book
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (bookStatus ==="book status" || bookTitle==="" || bookAuthor===""){
+      alert('please make sure all the inputs are valid');
+      return
+    }
     if (!bookNeedToUpdate){
       try {
         await addDoc(collection(db, "books"), {
@@ -110,10 +114,10 @@ const App = () => {
             value={bookAuthor}
             placeholder='Book Author'
             onChange={(e) => setBookAuthor(e.target.value)} />
-          <select name="book status" onChange={handleStatusChange} value={bookStatus} id="bookstatus">
+          <select name="book status" className='mb-2' onChange={handleStatusChange} value={bookStatus} id="bookstatus">
             <option>book status</option>
-            <option>available</option>
-            <option>not available</option>
+            <option value="available">available</option>
+            <option value="not available">not available</option>
           </select>
           <button className='text-white bg-gray-900 p-3 w-full  rounded-md font-bold '>Add/Update</button>
         </form>
