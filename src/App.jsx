@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { collection, getDocs, addDoc, deleteDoc, doc ,updateDoc} from "firebase/firestore";
 import { db } from '../firebaseConfig';
-import BookItem from './BookItem'
+import BookItem from './componenet/BookItem'
+import TableHeaderCell from './componenet/TableHeaderCell';
 
 const App = () => {
   const [bookAuthor, setBookAuthor] = useState('')
@@ -9,6 +10,7 @@ const App = () => {
   const [books, setBooks] = useState([])
   const [bookNeedToUpdate,setBookNeedToUpdate] = useState(false)
   const [bookToBeUpdatedId,setBookToBeEditedId]=useState('')
+ const tableHeaderCells=['#',"Book Title","Book Author","Status","Action"]
 
   //  get books
   const getBooks = async () => {
@@ -77,22 +79,7 @@ const App = () => {
     console.log(author,title)
     setBookAuthor(author)
     setBookTitle(title)
-  //  const {author,title}=books.find(book => book.id === bookId)
-  // //  console.log(targetedBook)
-  //  setBookTitle(title)
-  //  setBookAuthor(author)
-  //  console.log(title)
-  //  try {
-  //   await updateDoc(doc(db, "books",bookId), {
-  //     id:bookId,
-  //     title: bookTitle,
-  //     author: bookAuthor,
-  //     status: "available"
-  //   });
-  // } catch (e) {
-  //   alert(e.message)
-  // }
-  // setBookNeedToUpdate(false)
+ 
   }
 
 
@@ -128,11 +115,9 @@ const App = () => {
         <table className='md:w-1/2 mx-auto mt-20 '>
           <thead>
             <tr className=' my-20 w-full  m-[2rem]'>
-              <th className=' text-center border-[1px] p-2'>#</th>
-              <th className='text-center border-[1px] p-2'>Book Title</th>
-              <th className='text-center border-[1px] p-2'>Book Author</th>
-              <th className='text-center border-[1px] p-2'>Status</th>
-              <th className='text-center border-[1px] p-2'>Action</th>
+              {tableHeaderCells.map((cellName,index) => {
+                return <TableHeaderCell key={index} title={cellName} />
+              })}
             </tr>
           </thead>
           <tbody>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { collection,deleteDoc} from "firebase/firestore";
-import { db } from '../firebaseConfig';
+import { db } from '../../firebaseConfig';
 
 const BookItem = ({id,title,author,status,rank}) => {
     const deleteBook=async() => { 
@@ -12,8 +12,10 @@ const BookItem = ({id,title,author,status,rank}) => {
         }
      
     }
+
+
   return (
-    <tr>
+    <tr >
     <td className='text-center border-[1px] p-2'>{rank + 1} </td>
     <td className='text-center border-[1px] p-2'>{author}</td>
     <td className='text-center border-[1px] p-2'>{title}</td>
