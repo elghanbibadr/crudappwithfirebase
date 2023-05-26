@@ -11,7 +11,7 @@ const App = () => {
   const [bookNeedToUpdate,setBookNeedToUpdate] = useState(false)
   const [bookToBeUpdatedId,setBookToBeEditedId]=useState('')
  const tableHeaderCells=['#',"Book Title","Book Author","Status","Action"]
-
+ const tableBodyCellStyle="text-center border-[1px] p-2"
   //  get books
   const getBooks = async () => {
     const querySnapshot = await getDocs(collection(db, 'books'))
@@ -123,10 +123,10 @@ const App = () => {
           <tbody>
             {books.map(({ id, title, author, status }, index) => {
               return <tr key={id} >
-                <td className='text-center border-[1px] p-2'>{index + 1} </td>
-                <td className='text-center border-[1px] p-2'>{title}</td>
-                <td className='text-center border-[1px] p-2'>{author}</td>
-                <td className='text-center border-[1px] p-2'>{status}</td>
+                <td className={tableBodyCellStyle}>{index + 1} </td>
+                <td className={tableBodyCellStyle}>{title}</td>
+                <td className={tableBodyCellStyle}>{author}</td>
+                <td className={tableBodyCellStyle}>{status}</td>
                 <td className='text-center flex   border-[1px] p-2'>
                   <button onClick={() => editBook(id)} className='bg-red-400  text-white px-3 py-1 font-medium rounded-md'>Edit</button>
                   <button onClick={() => deleteBook(id)} className='bg-gray-900 text-white mx-1 px-3 py-1 font-medium rounded-md'>Delete</button>
