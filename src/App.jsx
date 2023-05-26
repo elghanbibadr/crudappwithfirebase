@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { collection, getDocs ,addDoc ,deleteDoc,doc} from "firebase/firestore";
+import { collection, getDocs, addDoc, deleteDoc, doc ,updateDoc} from "firebase/firestore";
 import { db } from '../firebaseConfig';
 import BookItem from './BookItem'
 
@@ -7,32 +7,39 @@ const App = () => {
   const [bookAuthor, setBookAuthor] = useState('')
   const [bookTitle, setBookTitle] = useState('')
   const [books, setBooks] = useState([])
+  const [bookNeedToUpdate,setBookNeedToUpdate] = useState(false)
 
-  const getBooks=async () =>{
-   const querySnapshot = await getDocs(collection(db,'books'))
-   const booksData=[]
-   querySnapshot.forEach((doc) => {
-     booksData.push( {id:doc.id ,...doc.data()}) ;
-  });
-  setBooks(booksData)
+  //  get books
+  const getBooks = async () => {
+    const querySnapshot = await getDocs(collection(db, 'books'))
+    const booksData = []
+    querySnapshot.forEach((doc) => {
+      booksData.push({ id: doc.id, ...doc.data() });
+    });
+    setBooks(booksData)
   }
 
   console.log(books)
   useEffect(() => {
-  getBooks()
-  },[])
+    getBooks()
+  }, [])
 
 
-  const handleSubmit =async (e) => { 
+  // add book
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-      await addDoc(collection(db, "books"), {
-        title:bookTitle,
-        author:bookAuthor ,
-        status:"available"
-      });
-    }catch(e){
-      alert(e.message)
+    if (!bookNeedToUpdate){
+      try {
+        await addDoc(collection(db, "books"), {
+          title: bookTitle,
+          author: bookAuthor,
+          status: "available"
+        });
+      } catch (e) {
+        alert(e.message)
+      }
+    }else{
+     editBook()
     }
     setBookAuthor('')
     setBookTitle('')
@@ -40,25 +47,48 @@ const App = () => {
   }
 
 
-  const deleteBook=async(docId) => { 
-    console.log((docId))
-    try{
-        await deleteDoc(doc(db,'books',docId))
-    }catch(e){
-        // alert(e.message)
+  // delete book
+  const deleteBook = async (bookId) => {
+    console.log((bookId))
+    try {
+      await deleteDoc(doc(db, 'books', bookId))
+    } catch (e) {
+      // alert(e.message)
     }
     getBooks()
- 
-}
+
+  }
+
+  // update books
+  const editBook=  async (bookId) => {
+    setBookNeedToUpdate(true)
+   const {author,title}=books.find(book => book.id === bookId)
+  //  console.log(targetedBook)
+   setBookTitle(title)
+   setBookAuthor(author)
+   console.log(title)
+   try {
+    await updateDoc(doc(db, "books",bookId), {
+      id:bookId,
+      title: bookTitle,
+      author: bookAuthor,
+      status: "available"
+    });
+  } catch (e) {
+    alert(e.message)
+  }
+  setBookNeedToUpdate(false)
+  }
+
 
   return (
     <>
       <header className='bg-gray-900 text-center p-4'>
         <h1 className='text-white text-2xl '>Library - Firebase CRUD</h1>
       </header>
-      <main  className=' mt-20 p-4'>
+      <main className=' mt-20 p-4'>
         {/* form */}
-        <form className='md:w-1/4 mx-auto '  onSubmit={handleSubmit} >
+        <form className='md:w-1/4 mx-auto ' onSubmit={handleSubmit} >
           <input
             id="booktitle"
             className="border-2 outline-none w-full border-[#272626]  p-3 rounded-sm"
@@ -91,16 +121,16 @@ const App = () => {
             </tr>
           </thead>
           <tbody>
-            {books.map(({ id, title, author, status },index) => {
-              return  <tr key={id} >
-              <td className='text-center border-[1px] p-2'>{index + 1} </td>
-              <td className='text-center border-[1px] p-2'>{author}</td>
-              <td className='text-center border-[1px] p-2'>{title}</td>
-              <td className='text-center border-[1px] p-2'>{status}</td>
-              <td className='text-center flex   border-[1px] p-2'>
-                  <button className='bg-red-400  text-white px-3 py-1 font-medium rounded-md'>Edit</button>
+            {books.map(({ id, title, author, status }, index) => {
+              return <tr key={id} >
+                <td className='text-center border-[1px] p-2'>{index + 1} </td>
+                <td className='text-center border-[1px] p-2'>{title}</td>
+                <td className='text-center border-[1px] p-2'>{author}</td>
+                <td className='text-center border-[1px] p-2'>{status}</td>
+                <td className='text-center flex   border-[1px] p-2'>
+                  <button onClick={() => editBook(id)} className='bg-red-400  text-white px-3 py-1 font-medium rounded-md'>Edit</button>
                   <button onClick={() => deleteBook(id)} className='bg-gray-900 text-white mx-1 px-3 py-1 font-medium rounded-md'>Delete</button>
-              </td>
+                </td>
               </tr>
               // return <BookItem key={id} rank={index} id={id} author={author} status={status} title={title} />
             })}
